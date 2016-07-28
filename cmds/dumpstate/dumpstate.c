@@ -272,7 +272,9 @@ static void dumpstate() {
     char radio[PROPERTY_VALUE_MAX], bootloader[PROPERTY_VALUE_MAX];
     char network[PROPERTY_VALUE_MAX], date[80];
     char build_type[PROPERTY_VALUE_MAX];
+    char cm_version[PROPERTY_VALUE_MAX];
 
+    property_get("ro.cm.version", cm_version, "(unknown)");
     property_get("ro.build.display.id", build, "(unknown)");
     property_get("ro.build.fingerprint", fingerprint, "(unknown)");
     property_get("ro.build.type", build_type, "(unknown)");
@@ -286,6 +288,7 @@ static void dumpstate() {
     printf("========================================================\n");
 
     printf("\n");
+    printf("CM Version: %s\n", cm_version);
     printf("Build: %s\n", build);
     printf("Build fingerprint: '%s'\n", fingerprint); /* format is important for other tools */
     printf("Bootloader: %s\n", bootloader);
@@ -302,7 +305,7 @@ static void dumpstate() {
     dump_files("UPTIME MMC PERF", mmcblk0, skip_not_stat, dump_stat_from_fd);
     dump_file("MEMORY INFO", "/proc/meminfo");
     run_command("CPU INFO", 10, "top", "-n", "1", "-d", "1", "-m", "30", "-t", NULL);
-    run_command("PROCRANK", 20, "procrank", NULL);
+    run_command("PROCRANK", 20, SU_PATH, "root", "procrank", NULL);
     dump_file("VIRTUAL MEMORY STATS", "/proc/vmstat");
     dump_file("VMALLOC INFO", "/proc/vmallocinfo");
     dump_file("SLAB INFO", "/proc/slabinfo");
